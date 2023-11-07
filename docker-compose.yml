@@ -1,0 +1,18 @@
+version: "3.7"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    volumes:
+      - .:/app:cached
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
+    # command: npm run dev
+    command: bash -c "tail -f /dev/null"
+    stdin_open: true
+    tty: true
