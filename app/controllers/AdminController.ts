@@ -4,8 +4,8 @@ import { Vendor } from "../models";
 import { GeneratePassword, GenerateSalt } from "../utility";
 
 export const CreateVendor = async (
-  req: Request,
-  res: Response,
+  request: Request,
+  response: Response,
   next: NextFunction
 ) => {
   const {
@@ -17,12 +17,14 @@ export const CreateVendor = async (
     phone,
     email,
     password,
-  } = <CreateVendorInput>req.body;
+  } = <CreateVendorInput>request.body;
 
   const existingVender = await Vendor.findOne({ email: email });
 
   if (existingVender !== null) {
-    return res.json({ message: "A vendor with this email already exists!" });
+    return response.json({
+      message: "A vendor with this email already exists!",
+    });
   }
 
   const salt = await GenerateSalt();
@@ -43,17 +45,35 @@ export const CreateVendor = async (
     rating: 0,
   });
 
-  return res.json(CreateVendor);
+  return response.json(CreateVendor);
 };
 
 export const GetVendors = async (
-  req: Request,
-  res: Response,
+  request: Request,
+  response: Response,
   next: NextFunction
-) => {};
+) => {
+  const vendors = await Vendor.find();
+
+  if (vendors !== null) {
+    return response.json(vendors);
+  }
+
+  return response.json({ message: "There are no vendors" });
+};
 
 export const GetVendorByID = async (
-  req: Request,
-  res: Response,
+  request: Request,
+  response: Response,
   next: NextFunction
-) => {};
+) => {
+  const vendorId = request.params.id;
+
+  const vendor = await Vendor.findById(vendorId);
+
+  if (vendor !== null) {
+    return response.json(vendor);
+  }
+
+  return response.json({ message: "There's no vendor with the given id" });
+};
